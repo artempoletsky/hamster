@@ -14,8 +14,16 @@ let stageWidth = 0;
 let stageHeight = 0;
 
 let hamster: Konva.Image;
+let hamsterContainer: Konva.Group;
 let tapTween: Konva.Tween;
 
+
+function calculateHamsterScale() {
+  let scale = Store.tapsCount / 50 + 0.5;
+
+  if (scale > 1) scale = 1;
+  return scale;
+}
 
 function resizeHamster() {
   const imageRatio = 1445 / 1228;
@@ -24,28 +32,48 @@ function resizeHamster() {
   hamster.setAttrs({
     offsetX: width / 2,
     offsetY: height / 2,
-    x: stageWidth / 2,
-    y: stageHeight * 0.95 - height / 2,
+    x: width / 2,
+    y: height / 2,
     // scaleX: 0.5,
     // scaleY: 0.5,
     width,
     height,
+    shadowColor: "#ffffff",
+    shadowBlur: 30,
+    // shadowOffsetX	Number	<optional>
+    // shadowOffsetY	Number	<optional>
+    shadowOpacity: 0,
+    shadowEnabled: true,
+  });
+
+  const scale = calculateHamsterScale();
+  hamsterContainer.setAttrs({
+    scaleX: scale,
+    scaleY: scale,
+    offsetX: width / 2,
+    offsetY: height,
+    x: stageWidth / 2,
+    y: stageHeight * 0.95,
   });
 }
 
 function addHamster() {
   // console.log(stageHeight, stageWidth);
+  hamsterContainer = new Konva.Group();
 
+
+  gameLayer.add(hamsterContainer);
   Konva.Image.fromURL("/game/Boss_Hamster.png", function (image) {
     hamster = image;
     resizeHamster();
-    gameLayer.add(image);
+    hamsterContainer.add(image);
 
     tapTween = new Konva.Tween({
       node: hamster,
       duration: 0.05,
       scaleX: 1.3,
       scaleY: 1.3,
+      shadowOpacity: 1,
       easing: Konva.Easings.EaseOut,
       onFinish: () => {
         // tapTween.tween.duration = 0.1;
@@ -156,6 +184,12 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
     spawnCoin(x, y);
     Store.tapsCount++;
   }
+
+  const scale = calculateHamsterScale();
+  hamsterContainer.setAttrs({
+    scaleX: scale,
+    scaleY: scale,
+  });
 }
 
 export function resize(width: number, height: number) {
