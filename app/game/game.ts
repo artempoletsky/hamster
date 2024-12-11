@@ -34,12 +34,9 @@ function resizeHamster() {
 }
 
 function addHamster() {
-  const imageRatio = 1445 / 1228;
   // console.log(stageHeight, stageWidth);
 
   Konva.Image.fromURL("/game/Boss_Hamster.png", function (image) {
-    const width = stageWidth - 50;
-    const height = imageRatio * width;
     hamster = image;
     resizeHamster();
     gameLayer.add(image);
@@ -91,8 +88,52 @@ export function destroy() {
 
 
 function hamsterTap(x: number, y: number) {
-  Store.tapsCount++;
   tapTween.play();
+}
+
+
+function spawnCoin(x: number, y: number) {
+
+  Konva.Image.fromURL("/game/Coin.png", function (coin) {
+    const imageRatio = 631 / 641;
+    const width = stageWidth / 6;
+    const height = width * imageRatio;
+
+    coin.setAttrs({
+      x,
+      y,
+      offsetX: width / 2,
+      offsetY: height / 2,
+      width,
+      height,
+    });
+    coinsLayer.add(coin);
+
+    const aY = -10;
+    // let aX = 0;
+    const distanceScale = 20;
+    const anim = new Konva.Animation(function (frame) {
+      if (!frame) return;
+
+      const t = frame.time / 1000;
+
+      if (t > 1) {
+        anim.stop();
+        coin.remove();
+        return;
+      }
+      coin.y(y + (t * -25 + aY * t * t / 2) * distanceScale);
+      // coin.x(x + (t * 0 + aX * t * t / 2) * distanceScale);
+      coin.opacity(1 - Math.pow(t, 4));
+      // coin.rotation(t * rotations[i]);
+
+      // shape.y(shape.y() + 1);
+      // update stuff
+    }, coinsLayer);
+
+    anim.start();
+  });
+
 }
 
 function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
@@ -100,12 +141,20 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
     // console.log(e.evt);
     if (e.evt.touches.length) {
       hamsterTap(e.evt.touches[0].clientX, e.evt.touches[0].clientY);
+      for (const t of e.evt.touches) {
+        spawnCoin(t.clientX, t.clientY);
+        Store.tapsCount++;
+      }
     } else {
       throw "Touches list is empty";
     }
 
   } else {
-    hamsterTap(e.evt.layerX, e.evt.layerY);
+    const x = e.evt.layerX;
+    const y = e.evt.layerY;
+    hamsterTap(x, y);
+    spawnCoin(x, y);
+    Store.tapsCount++;
   }
 }
 

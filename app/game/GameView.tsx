@@ -1,6 +1,6 @@
 "use client";
 
-import Konva from "konva";
+// import Konva from "konva";
 import { useEffect, useRef } from "react";
 import css from "./game.module.css";
 // import { createEffectsLayer, removeEffectsLayer } from "./effects";
