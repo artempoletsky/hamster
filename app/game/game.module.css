@@ -1,0 +1,41 @@
+.game {
+    flex-grow: 1;
+    position: relative;
+    min-height: 300px;
+}
+
+/* .game_menu {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 1;
+} */
+
+.konva {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+}
+
+/* .spawn_hint {
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    width: 400px;
+    margin-left: -200px;
+    font-size: xx-large;
+    pointer-events: none;
+    text-align: center;
+}
+
+@media (max-width: 830px) {
+    .spawn_hint {
+        top: 70px;
+        font-size: large;
+        top: 50%;
+        margin-top: -5px;
+    }
+} */

@@ -1,9 +1,8 @@
-import Image from "next/image";
+
+import GameView from "./game/GameView";
 
 export default function Home() {
   return (
-    <div className="">
-      <canvas></canvas>
-    </div>
+    <GameView />
   );
 }
