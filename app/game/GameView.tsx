@@ -15,8 +15,7 @@ export default function GameView() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [tapsCount, setTapsCount] = useStore("tapsCount");
-
-
+  
   function onWindowResize(e: UIEvent) {
     const { clientWidth, clientHeight } = containerRef.current!;
     game.resize(clientWidth, clientHeight);
@@ -24,7 +23,6 @@ export default function GameView() {
 
 
   useEffect(() => {
-
     window.addEventListener("resize", onWindowResize);
     game.init(containerRef.current!);
     return () => {

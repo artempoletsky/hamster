@@ -16,6 +16,23 @@ let stageHeight = 0;
 let hamster: Konva.Image;
 let tapTween: Konva.Tween;
 
+
+function resizeHamster() {
+  const imageRatio = 1445 / 1228;
+  const width = stageWidth - 50;
+  const height = imageRatio * width;
+  hamster.setAttrs({
+    offsetX: width / 2,
+    offsetY: height / 2,
+    x: stageWidth / 2,
+    y: stageHeight * 0.95 - height / 2,
+    // scaleX: 0.5,
+    // scaleY: 0.5,
+    width,
+    height,
+  });
+}
+
 function addHamster() {
   const imageRatio = 1445 / 1228;
   // console.log(stageHeight, stageWidth);
@@ -24,16 +41,7 @@ function addHamster() {
     const width = stageWidth - 50;
     const height = imageRatio * width;
     hamster = image;
-    image.setAttrs({
-      offsetX: width / 2,
-      offsetY: height / 2,
-      x: stageWidth / 2,
-      y: stageHeight * 0.95 - height / 2,
-      // scaleX: 0.5,
-      // scaleY: 0.5,
-      width,
-      height,
-    });
+    resizeHamster();
     gameLayer.add(image);
 
     tapTween = new Konva.Tween({
@@ -105,14 +113,8 @@ export function resize(width: number, height: number) {
   stage.width(width);
   stage.height(height);
 
-  for (const shape of gameLayer.children) {
-    const w = shape.width();
-    const h = shape.height();
-    if (w + shape.x() > width) {
-      shape.x(width - w);
-    }
-    if (h + shape.y() > height) {
-      shape.y(height - h);
-    }
-  }
+  stageWidth = width;
+  stageHeight = height;
+
+  resizeHamster();
 }
