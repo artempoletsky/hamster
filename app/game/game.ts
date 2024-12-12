@@ -205,7 +205,7 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
       hamsterTap(e.evt.touches.length);;
       let lastTouches: typeof Store.lastTouches = [];
       for (const t of e.evt.touches) {
-        let x = t.clientX, y = t.clientY;
+        let x = Math.floor(t.clientX), y = Math.floor(t.clientY);
         spawnCoin(x, y);
         lastTouches.push({ x, y });
       }
@@ -215,8 +215,8 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
     }
 
   } else {
-    const x = e.evt.layerX;
-    const y = e.evt.layerY;
+    const x = Math.floor(e.evt.layerX);
+    const y = Math.floor(e.evt.layerY);
     hamsterTap(1);
     spawnCoin(x, y);
     Store.lastTouches = [{ x, y }];
