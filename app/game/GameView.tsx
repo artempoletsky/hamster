@@ -14,8 +14,9 @@ import { useStore } from "../store";
 export default function GameView() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [tapsCount, setTapsCount] = useStore("tapsCount");
-  const [lastTouches, setLastTouches] = useStore("lastTouches");
+  const [tapsCount,] = useStore("tapsCount");
+  const [lastTouches,] = useStore("lastTouches");
+  const [heat,] = useStore("heat");
 
   function onWindowResize(e: UIEvent) {
     const { clientWidth, clientHeight } = containerRef.current!;
@@ -35,6 +36,7 @@ export default function GameView() {
   return <div className={css.game + " text-white text-lg"}>
     <div className="p-3">Taps: {tapsCount}</div>
     <ul className="absolute right-0 top-0 p-3">
+      <div>Heat: {heat}</div>
       {lastTouches.map((t, i) => <li key={i}>{t.x} | {t.y}</li>)}
     </ul>
     <div ref={containerRef} className={css.konva}></div>

@@ -4,6 +4,7 @@ import Konva from "konva";
 // import { createEffectsLayer, removeEffectsLayer, runFireworks } from "./effects";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Store } from "../store";
+import debounce from "lodash.debounce";
 // import { Store } from "../store";
 
 let stage: Konva.Stage;
@@ -17,11 +18,9 @@ let hamster: Konva.Image;
 let hamsterContainer: Konva.Group;
 let tapTween: Konva.Tween;
 
-let heat = 0;
 
 function calculateHamsterScale() {
-  let scale = Store.tapsCount / 50 + 0.5;
-
+  let scale = 0.3 * Store.heat + 0.7;
   if (scale > 1) scale = 1;
   return scale;
 }
@@ -116,7 +115,41 @@ export function destroy() {
 }
 
 
-function hamsterTap(x: number, y: number) {
+function redrawHeat() {
+  const scale = calculateHamsterScale();
+  hamsterContainer.setAttrs({
+    scaleX: scale,
+    scaleY: scale,
+  });
+}
+
+let coolInterval: ReturnType<typeof setInterval>;
+
+const debouncedCool = debounce(() => {
+  let t = 0;
+  const tEnd = 5000;
+  const heatStart = Store.heat;
+  coolInterval = setInterval(() => {
+    t += 100;
+    const dt = t / tEnd;
+    if (dt >= 1) {
+      Store.heat = 0;
+      clearInterval(coolInterval);
+    } else {
+      Store.heat = heatStart * (1 - Math.pow(dt, 3));
+    }
+    redrawHeat();
+  }, 100);
+}, 2000);
+
+function hamsterTap(touchesCount: number) {
+  Store.tapsCount += touchesCount;
+  let heat = Store.heat;
+  heat += touchesCount * 0.15;
+  if (heat > 1) heat = 1;
+  Store.heat = heat;
+  clearInterval(coolInterval);
+  debouncedCool();
   tapTween.play();
 }
 
@@ -165,17 +198,18 @@ function spawnCoin(x: number, y: number) {
 
 }
 
+
+
 function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
   if ("touches" in e.evt) {
     // console.log(e.evt);
     if (e.evt.touches.length) {
-      hamsterTap(e.evt.touches[0].clientX, e.evt.touches[0].clientY);
+      hamsterTap(e.evt.touches.length);;
       let lastTouches: typeof Store.lastTouches = [];
       for (const t of e.evt.touches) {
         let x = t.clientX, y = t.clientY;
         spawnCoin(x, y);
         lastTouches.push({ x, y });
-        Store.tapsCount++;
       }
       Store.lastTouches = lastTouches;
     } else {
@@ -185,17 +219,12 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
   } else {
     const x = e.evt.layerX;
     const y = e.evt.layerY;
-    hamsterTap(x, y);
+    hamsterTap(1);
     spawnCoin(x, y);
     Store.lastTouches = [{ x, y }];
-    Store.tapsCount++;
   }
 
-  const scale = calculateHamsterScale();
-  hamsterContainer.setAttrs({
-    scaleX: scale,
-    scaleY: scale,
-  });
+  redrawHeat();
 }
 
 export function resize(width: number, height: number) {
