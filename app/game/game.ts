@@ -18,6 +18,8 @@ let hamster: Konva.Image;
 let hamsterContainer: Konva.Group;
 let tapTween: Konva.Tween;
 
+let coinsTarget = { x: 0, y: 0 };
+
 
 function calculateHamsterScale() {
   let scale = 0.3 * Store.heat + 0.7;
@@ -38,8 +40,8 @@ function resizeHamster() {
     // scaleY: 0.5,
     width,
     height,
-    shadowColor: "#ffffff",
-    shadowBlur: 30,
+    shadowColor: "#f73325",
+    shadowBlur: 10,
     // shadowOffsetX	Number	<optional>
     // shadowOffsetY	Number	<optional>
     shadowOpacity: 0,
@@ -73,7 +75,7 @@ function addHamster() {
       duration: 0.05,
       scaleX: 1.3,
       scaleY: 1.3,
-      shadowOpacity: 1,
+      shadowOpacity: 0.6,
       easing: Konva.Easings.EaseOut,
       onFinish: () => {
         // tapTween.tween.duration = 0.1;
@@ -155,6 +157,10 @@ function hamsterTap(touchesCount: number) {
 
 
 function spawnCoin(x: number, y: number) {
+  const target = document.getElementById("CoinsTarget")!;
+  // console.log(target.offsetLeft, target.offsetTop);
+  coinsTarget.x = target.offsetLeft + Math.random() * target.offsetWidth;
+  coinsTarget.y = target.offsetTop + target.offsetHeight / 2;
 
   Konva.Image.fromURL("/game/Coin.png", function (coin) {
     const imageRatio = 631 / 641;
@@ -171,29 +177,22 @@ function spawnCoin(x: number, y: number) {
     });
     coinsLayer.add(coin);
 
-    const aY = -10;
+    // const aY = -10;
     // let aX = 0;
-    const distanceScale = 20;
-    const anim = new Konva.Animation(function (frame) {
-      if (!frame) return;
+    // const distanceScale = 20;
 
-      const t = frame.time / 1000;
-
-      if (t > 1) {
-        anim.stop();
+    coin.to({
+      x: coinsTarget.x,
+      y: coinsTarget.y,
+      scaleX: 0.3,
+      scaleY: 0.3,
+      duration: 0.3,
+      easing: Konva.Easings.EaseOut,
+      onFinish: () => {
         coin.remove();
-        return;
       }
-      coin.y(y + (t * -25 + aY * t * t / 2) * distanceScale);
-      // coin.x(x + (t * 0 + aX * t * t / 2) * distanceScale);
-      coin.opacity(1 - Math.pow(t, 4));
-      // coin.rotation(t * rotations[i]);
+    });
 
-      // shape.y(shape.y() + 1);
-      // update stuff
-    }, coinsLayer);
-
-    anim.start();
   });
 
 }

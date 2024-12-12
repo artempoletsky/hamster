@@ -34,9 +34,9 @@ export default function GameView() {
   }, []);
 
   return <div className={css.game + " text-white text-lg"}>
-    <div className="p-3">Taps: {tapsCount}</div>
+    <div className="p-3">Taps: <span id="CoinsTarget">{tapsCount}</span></div>
     <ul className="absolute right-0 top-0 p-3">
-      <div>Heat: {heat}</div>
+      {/* <div>Heat: {heat}</div> */}
       {lastTouches.map((t, i) => <li key={i}>{t.x} | {t.y}</li>)}
     </ul>
     <div ref={containerRef} className={css.konva}></div>
