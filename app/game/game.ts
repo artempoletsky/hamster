@@ -90,7 +90,6 @@ function addHamster() {
 export function init(container: HTMLDivElement) {
   stageWidth = container.clientWidth;
   stageHeight = container.clientHeight;
-
   stage = new Konva.Stage({
     container: container,
     width: stageWidth,
@@ -226,12 +225,12 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
   redrawHeat();
 }
 
-export function resize(width: number, height: number) {
-  stage.width(width);
-  stage.height(height);
+export function resize(container: HTMLDivElement) {
+  stageWidth = container.clientWidth;
+  stageHeight = container.clientHeight;
 
-  stageWidth = width;
-  stageHeight = height;
+  stage.width(stageWidth);
+  stage.height(stageHeight);
 
   resizeHamster();
 }
