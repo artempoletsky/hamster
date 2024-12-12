@@ -152,6 +152,9 @@ function hamsterTap(touchesCount: number) {
   clearInterval(coolInterval);
   debouncedCool();
   tapTween.play();
+  if (navigator && "vibrate" in navigator){
+    navigator.vibrate(200);
+  }
 }
 
 
