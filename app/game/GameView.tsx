@@ -15,7 +15,8 @@ export default function GameView() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [tapsCount, setTapsCount] = useStore("tapsCount");
-  
+  const [lastTouches, setLastTouches] = useStore("lastTouches");
+
   function onWindowResize(e: UIEvent) {
     const { clientWidth, clientHeight } = containerRef.current!;
     game.resize(clientWidth, clientHeight);
@@ -31,8 +32,11 @@ export default function GameView() {
     };
   }, []);
 
-  return <div className={css.game}>
-    <div className="p-3 text-white text-lg">Taps: {tapsCount}</div>
+  return <div className={css.game + " text-white text-lg"}>
+    <div className="p-3">Taps: {tapsCount}</div>
+    <ul className="absolute right-0 top-0 p-3">
+      {lastTouches.map((t, i) => <li key={i}>{t.x} | {t.y}</li>)}
+    </ul>
     <div ref={containerRef} className={css.konva}></div>
     {/* {spawnMode && <div className={css.spawn_hint}>Click on canvas to spawn rectangle</div>} */}
     {/* <div className={css.game_menu}>

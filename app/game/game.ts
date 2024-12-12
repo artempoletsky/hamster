@@ -17,6 +17,7 @@ let hamster: Konva.Image;
 let hamsterContainer: Konva.Group;
 let tapTween: Konva.Tween;
 
+let heat = 0;
 
 function calculateHamsterScale() {
   let scale = Store.tapsCount / 50 + 0.5;
@@ -169,10 +170,14 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
     // console.log(e.evt);
     if (e.evt.touches.length) {
       hamsterTap(e.evt.touches[0].clientX, e.evt.touches[0].clientY);
+      let lastTouches: typeof Store.lastTouches = [];
       for (const t of e.evt.touches) {
-        spawnCoin(t.clientX, t.clientY);
+        let x = t.clientX, y = t.clientY;
+        spawnCoin(x, y);
+        lastTouches.push({ x, y });
         Store.tapsCount++;
       }
+      Store.lastTouches = lastTouches;
     } else {
       throw "Touches list is empty";
     }
@@ -182,6 +187,7 @@ function onStageClick(e: KonvaEventObject<MouseEvent | TouchEvent>) {
     const y = e.evt.layerY;
     hamsterTap(x, y);
     spawnCoin(x, y);
+    Store.lastTouches = [{ x, y }];
     Store.tapsCount++;
   }
 
